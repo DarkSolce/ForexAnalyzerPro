@@ -153,8 +153,8 @@ const ForexAnalyzerPro = () => {
     
     // MACD
     const macd = ema12 - ema26;
-    const signal = macd;
-    const histogram = macd - signal;
+    const macdSignal = macd;
+    const histogram = macd - macdSignal;
     
     // Bandes de Bollinger
     const stdDev = Math.sqrt(
@@ -192,7 +192,7 @@ const ForexAnalyzerPro = () => {
     const support2 = pivotPoint - (highs[highs.length - 1] - lows[lows.length - 1]);
     
     // Algorithme de signal avancé
-    let signal = 'NEUTRE';
+    let tradingSignal = 'NEUTRE';
     let confidence = 50;
     let strength = 0;
     const reasons = [];
@@ -226,24 +226,24 @@ const ForexAnalyzerPro = () => {
     
     // Détermination du signal final
     if (strength > 60) {
-      signal = 'ACHAT FORT';
+      tradingSignal = 'ACHAT FORT';
       confidence = Math.min(95, 60 + strength - 60);
     } else if (strength > 30) {
-      signal = 'ACHAT';
+      tradingSignal = 'ACHAT';
       confidence = Math.min(80, 50 + strength - 30);
     } else if (strength < -60) {
-      signal = 'VENTE FORTE';
+      tradingSignal = 'VENTE FORTE';
       confidence = Math.min(95, 60 + Math.abs(strength) - 60);
     } else if (strength < -30) {
-      signal = 'VENTE';
+      tradingSignal = 'VENTE';
       confidence = Math.min(80, 50 + Math.abs(strength) - 30);
     } else {
-      signal = 'NEUTRE';
+      tradingSignal = 'NEUTRE';
       confidence = 50 - Math.abs(strength) / 2;
     }
     
     // Calcul des niveaux de trading
-    const isLong = signal.includes('ACHAT');
+    const isLong = tradingSignal.includes('ACHAT');
     const stopLoss = isLong ? support1 : resistance1;
     const takeProfit1 = isLong ? resistance1 : support1;
     const takeProfit2 = isLong ? resistance2 : support2;
@@ -263,7 +263,7 @@ const ForexAnalyzerPro = () => {
       ema26,
       rsi,
       macd,
-      signal: signal,
+      macdSignal: macdSignal,
       histogram,
       upperBand,
       lowerBand,
@@ -275,7 +275,7 @@ const ForexAnalyzerPro = () => {
       support2,
       resistance1,
       resistance2,
-      signalType: signal,
+      signalType: tradingSignal,
       confidence,
       strength,
       reasons: reasons.slice(0, 5),
